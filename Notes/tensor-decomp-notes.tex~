@@ -9,10 +9,13 @@
 
 \usepackage{prob-style}
 \usepackage{my-theorems}
+%\usepackage{Latexmk}
 
 \begin{document}
 \maketitle
 \section{Definitions and set-up}
+
+Let's see if this works
 
 Suppose that \(a_i \sim \Normal_d(0, I)\) are iid and define
 \[
@@ -160,8 +163,8 @@ In particular, for a finite but large \(n\), if we condition on \(\alpha\), trea
 \subsection{Joint density of Wishart eigenvalues}
 Let \(M \sim \mathcal{W}_d(I, n)\) be a standard Wishart matrix. The eigenvalues of \(M\) then have joint density
 \[
-  f(\lambda)
-  = \frac{1}{Z_{n, d}} \prod_{i=1}^d \lambda_i^{(n-d-1)/2} e^{-\lambda_i/2} \prod_{i < j} \abs{\lambda_i - \lambda_j} \ind_{\lambda_1 \geq \dotsb \lambda_d},
+  Q_{n, d}(\lambda)
+  = \frac{1}{Z_{n, d}} \prod_{i=1}^d \lambda_i^{(n-d-1)/2} e^{-\lambda_i/2} \prod_{i < j} \abs{\lambda_i - \lambda_j} \ind_{\lambda_1 \geq \dotsb \geq \lambda_d},
 \]
 where
 \[
@@ -177,8 +180,12 @@ and in turn \(\Gamma_d\) is the multivariate gamma function defined by
 \subsection{Determinant calculation}
 Let \(x\) be a random variable independent of \(M\) with some density \(f\). We then have that
 \begin{align*}
-  \E \abs{\det(xI - M)} \ind_{(xI - M) \succeq 0} \ind_{x \in B}
-  &= 
+  \E[\abs{\det(xI - M)}
+  &\ind_{(xI - M) \succeq 0} \ind_{x \in B}] \\
+  &= \int_B f(x) \int_{x \geq \lambda_1 \geq \dotsb \geq \lambda_d} \prod_{j=1}^d (x - \lambda_j) Q_{n, d}(\lambda) \diff \lambda \diff x \\
+  &= \frac{1}{Z_{n, d}} \int_B f(\lambda_{0}) \int_{\lambda_0 \geq \dotsb \geq \lambda_d} \prod_{0\leq i < j \leq d} \abs{\lambda_i - \lambda_j} \prod_{i=1}^d \lambda_i ^{(n-d-1)/2} e^{-\lambda_i/2} \diff \lambda \diff \lambda_0 \\
+  &= \frac{Z_{n+1, d+1}}{Z_{n, d}} \int \lambda_0^{-(n-d-1)/2} e^{\lambda_0/2} f(\lambda_0)\ind_{\lambda_0 \in B} Q_{n+1, d+1}(\lambda) \diff \lambda \\
+  &= \frac{Z_{n+1, d+1}}{Z_{n, d}} \E_{\mathcal{W}}^{n+1, d+1}\big[\lambda_{\max}^{-(n-d-1)/2} e^{\lambda_{\max}/2} f(\lambda_{\max}) ; \lambda_{\max} \in B\big]
 \end{align*}
 
 \section{Dynamics of gradient descent}
