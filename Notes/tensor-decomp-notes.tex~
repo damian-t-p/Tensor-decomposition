@@ -208,7 +208,83 @@ Further, taking \(w_j = y_j/\norm{a_j}\) so that recovery of \(a_j\) is characte
 \[
   \dot{w}_j
   = \norm{a_j}^k\bigg\{(w_j^{k-1} - w_j^{k+1}) - w_j \sum_{i\neq j} \Big[\frac{\norm{a_i}}{\norm{a_j}}\Big]^k w_i^k + \sum_{i\neq j} \Big[\frac{\norm{a_i}}{\norm{a_j}}\Big]^k w_i^{k-1} \frac{\iprod{a_i}{a_j}}{\norm{a_i}\norm{a_j}}\bigg\}.
-  \]
+\]
+
+\subsection{Orthogonal case}
+Before proceeding, we will consider the case where \(n \ll d\). This is very close to the orthogonal case, so first, let's consider the setting where the \(a_i\) are orthogonal unit vectors. The previous equations now become
+\[
+  \dot{w}_j
+  = w_j^{k-1} - w_j^{k+1} - w_j \sum_{i \neq j} w_i^k.
+\]
+
+Notice that, since \(n \leq d\), we have
+\begin{align*}
+  1
+  &= \norm{x}^2 \\
+  &\geq \iprod{a_i}{x}^2 + \dotsb + \iprod{a_n}{x^2} \\
+  &= w_1^2 + \dotsb + w_n^2.
+\end{align*}
+
+In particular, if \(w_j \rightarrow 1\), then \(w_i \rightarrow 0\) for all other indices \(i\). In particular, we have that \(\sum_{i\neq j}w_i^k \rightarrow 0\).
+
+By flipping signs is necessary, we can assume that each \(w_j \geq 0\). Now, we have that, if \(w_j\) is the largest of the \(w\)s, then
+\begin{align*}
+  \dot{w}_k
+  &= w_j^{k-1}(1 - w_j^2) - w_j \sum_{i \neq j} w_i^k \\
+  &\geq w_j^{k-1}(1-w_j^2) - w_j^{k-1}\sum_{i\neq j} w_i^2 \\
+  &\geq w_j^{k-1}(1 - w_j^2) - w_j(1 - w_j^2) \\
+  &\geq 0.
+\end{align*}
+
+Hence, the largest \(w\) cannot decrease. In particular, is must converge. But now, solving \(\dot{w}_j = 0\) in the limit, we have
+\[
+  w_j^{k-1}(1 - w_j^2)
+  = w_j \sum_{i\neq j} w_i^k.
+\]
+
+But the right-hand side is non-negative while the left is non-positive. Hence, we must have that \(w_j = 0\) or \(1\). But since \(w_j\) is the maximum \(w\), this means that \(w_j = 1\) and so the rest of the \(w_i = 0\). Hence, we conclude that the maximum \(w\) converges to \(1\) while the rest converge to \(0\). That is to say, after running gradient ascent, \(x \rightarrow a_j\).
+
+\subsection{Undercomplete normal case}
+Now, let's consider the \(a_i\)s again, though suppressing the inner product term. Suppose first that \(k = 3\). In this case, it is more interesting to study the quantity \(v_j(t) = \norm{a_j}^3 w_j\). The equations governing the \(v\)s are now
+\[
+  \dot{v}_j
+  = v_j^2 - \frac{v_j^4}{\norm{a_j}^6} - v_j \sum_{i\neq j} \frac{v_i^3}{\norm{a_i}^6}.
+\]
+
+Now, suppose that \(v_j(t) = v_i(t) = \lambda\) for some \(i\neq j\) and \(t\). We then have that
+\begin{align*}
+  \dot{v}_j(t) - \dot{v}_j(t)
+  &= -\frac{\lambda^4}{\norm{a_j}^6} + \frac{\lambda^4}{\norm{a_i}^6} - \lambda\sum_{l\neq j}\frac{v_l^3}{\norm{a_l}^6} + \lambda \sum_{l\neq i} \frac{v_l^3}{\norm{a_l}^6} \\
+  &= \lambda^4\Big(-\frac{1}{\norm{a_j}^6} + \frac{1}{\norm{a_i}^6} + \frac{1}{\norm{a_j}^6} - \frac{1}{\norm{a_i}^6}\Big) \\
+  &= 0.
+\end{align*}
+
+Hence, none of the \(v_j\) may cross each other. Hence, the greatest \(v_j\) stays the greatest.
+
+Indeed, for any \(k\), this can be achieved for \(v_j = \norm{a_j}^\gamma w_j\) by taking \(\gamma = k/(k-2)\), as shown:
+\begin{align*}
+  \dot{v}_j
+  &= v_j^{k-1} \norm{a_j}^{\gamma(2-k) + k} - v_j^{k+1} \norm{a_j}^{k(1-\gamma)} - v_j \sum_{i \neq j} \norm{a_i}^{k(1-\gamma)} v_i^k \\
+  &= v_j^{k-1}  - v_j^{k+1}\norm{a_j}^{-2k/(k-2)} - v_j \sum_{i\neq j} v_i^k \norm{a_i}^{-2k/(k-2)}.
+\end{align*}
+
+Using a similar trick to the orthogonal case, we have thus that, for maximal \(v_j\),
+\begin{align*}
+  \dot{v}_j
+  &= v_j^{k-1}(1 - v_j^2 \norm{a_i}^{-2\gamma}) - v_j^{k-1} \sum_{i\neq j} v_i \norm{a_i}^{-2\gamma} \\
+  &= v_j^{k-1} \Big(1 - \sum_{i=1}^n w_j^2\Big).
+\end{align*}
+
+Now, notice that we have
+\begin{align*}
+  \deriv{}{t} \norm{w}^2
+  &= 2\sum_{j=1}^n \dot{w}_j w_j \\
+  &= 2\sum_{j=1}^n \Big[\norm{a_j}^k w_j^k(1 - w_j^2) - w_j^2 \sum_{i\neq j} \norm{a_i}^k w_i^k\Big] \\
+  &= 2\sum_{j=1}^n \norm{a_j}^k w_j^k(1 - w_j^2) - 2\sum_{i=1}^n \norm{a_i}^k w_i^k \sum_{j\neq i}^n w_j^2 \\
+  &= 2\sum_{j=1}^n \norm{a_j}^k w_j^k(1 - w_j^2) - 2\sum_{j=1}^n \norm{a_j}^k w_j^k(\norm{w}^2 - w_j^2) \\
+  &= 2(1 - \norm{w}^2)\sum_{j=1}^n \norm{a_j}^k w_j^k \\
+  &>0,
+\end{align*}
+with equilibrium only when \(\norm{w} = 1\) or \(0\). Hence, we have that \(\norm{w} \rightarrow 1\), and so \(v_j \rightarrow 1\) while all the others decay to \(0\). Hence, in this case also, \(x\rightarrow a_j\).
 
 \end{document}
- 

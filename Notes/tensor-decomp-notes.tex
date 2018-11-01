@@ -271,7 +271,7 @@ Indeed, for any \(k\), this can be achieved for \(v_j = \norm{a_j}^\gamma w_j\) 
 Using a similar trick to the orthogonal case, we have thus that, for maximal \(v_j\),
 \begin{align*}
   \dot{v}_j
-  &= v_j^{k-1}(1 - v_j^2 \norm{a_i}^{-2\gamma}) - v_j^{k-1} \sum_{i\neq j} v_i \norm{a_i}^{-2\gamma} \\
+  &\geq v_j^{k-1}(1 - v_j^2 \norm{a_i}^{-2\gamma}) - v_j^{k-1} \sum_{i\neq j} v_i \norm{a_i}^{-2\gamma} \\
   &= v_j^{k-1} \Big(1 - \sum_{i=1}^n w_j^2\Big).
 \end{align*}
 
@@ -282,9 +282,60 @@ Now, notice that we have
   &= 2\sum_{j=1}^n \Big[\norm{a_j}^k w_j^k(1 - w_j^2) - w_j^2 \sum_{i\neq j} \norm{a_i}^k w_i^k\Big] \\
   &= 2\sum_{j=1}^n \norm{a_j}^k w_j^k(1 - w_j^2) - 2\sum_{i=1}^n \norm{a_i}^k w_i^k \sum_{j\neq i}^n w_j^2 \\
   &= 2\sum_{j=1}^n \norm{a_j}^k w_j^k(1 - w_j^2) - 2\sum_{j=1}^n \norm{a_j}^k w_j^k(\norm{w}^2 - w_j^2) \\
-  &= 2(1 - \norm{w}^2)\sum_{j=1}^n \norm{a_j}^k w_j^k \\
-  &>0,
+  &= 2(1 - \norm{w}^2)\sum_{j=1}^n \norm{a_j}^k w_j^k,
 \end{align*}
-with equilibrium only when \(\norm{w} = 1\) or \(0\). Hence, we have that \(\norm{w} \rightarrow 1\), and so \(v_j \rightarrow 1\) while all the others decay to \(0\). Hence, in this case also, \(x\rightarrow a_j\).
+with equilibrium only when \(\norm{w} = 1\) or \(0\). Hence, if the sum is positive (especially for even \(k\)), we have that \(\norm{w} \rightarrow 1\).
+
+Now, notice that, at \(\sum_{j=1}^n \norm{a_j}^k w_j^k = 0\), we have that
+\begin{align*}
+  \deriv{}{t} \sum_{j=1}^n \norm{a_j}^k w_j^k
+  &= k\sum_{j=1}^n \norm{a_j}^k\dot{w}_j w_j^{k-1} \\
+  &= k\sum_{j=1}^n \big[ \norm{a_j}^{2k}(w_j^{2(k-1)}  - w_j^{2k}) - \norm{a_j}^k w_j^k \sum_{i\neq j} \norm{a_i}^k w_i^k \\
+  &= k\sum_{j=1}^n \norm{a_i}^{2k} w_j^{2(k-1)} - \Big(\sum_{j=1}^n \norm{a_j}^k w_j^k\Big)^2 \\
+  &= k\sum_{j=1}^n \norm{a_i}^{2k} w_j^{2(k-1)} \\
+  &\geq 0.
+\end{align*}
+
+Hence, the quantity \(\sum_{j=1}^n \norm{a_j}^k w_j^k\) can never switch from positive to negative. For odd \(k\), the sign of this quantity can be flipped simply by substituting \(x \mapsto -x\), so \(\norm{w}\) must converge for at least one of these options.
+
+\subsection{Perturbation analysis}
+
+\subsubsection{Failure in the overcomplete case}
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\linewidth*2/3]{perturbation-analysis-failure/unperturbed.pdf}
+  \vfill
+  \includegraphics[width=\linewidth*2/3]{perturbation-analysis-failure/perturbed.pdf}
+  \vfill
+  \includegraphics[width=\linewidth*2/3]{perturbation-analysis-failure/max-comparison.pdf}
+  \caption{The unperturbed and perturbed systems, together with a comparison of the ``winner'' in the unperturbed case to the equivalent component in the perturbed case. \(n = 10, d=5, k=4.\)}
+  \label{fig:perturbation-failure}
+\end{figure}
+Observe the plots in \cref{fig:perturbation-failure}, where the system has been simulated for \(n = 10, d=5, k=4\). We see that, as expected, in the unperturbed case, a single component ``wins,'' while the rest converge to \(0\). Unfortunately, when the system is perturbed, this component is not the eventual ``winner.''
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\linewidth*2/3]{perturbation-analysis-failure/unperturbed-large.pdf}
+  \vfill
+  \includegraphics[width=\linewidth*2/3]{perturbation-analysis-failure/perturbed-large.pdf}
+  \vfill
+  \includegraphics[width=\linewidth*2/3]{perturbation-analysis-failure/max-comparison-large.pdf}
+  \caption{The unperturbed and perturbed systems, together with a comparison of the ``winner'' in the unperturbed case to the equivalent component in the perturbed case. \(n = 100, d=20, k=3.\)}
+  \label{fig:perturbation-failure-large}
+\end{figure}
+
+However, all is not lost, since in the perturbed case, one of the components converges to a value close to \(-1\), and so a vector is recovered. However, as \(n\) grows large, the max value is not quite as good, as shown in \cref{fig:perturbation-failure-large} with \(n = 100, d=20, k=3\). Taking \(k = 4\) seems to solve this issue, likely because of the problem not getting ``stuck'' on the wrong side of the hemisphere.
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\linewidth*2/3]{perturbation-analysis-failure/unperturbed-large-4.pdf}
+  \vfill
+  \includegraphics[width=\linewidth*2/3]{perturbation-analysis-failure/perturbed-large-4.pdf}
+  \vfill
+  \includegraphics[width=\linewidth*2/3]{perturbation-analysis-failure/max-comparison-large-4.pdf}
+  \caption{The unperturbed and perturbed systems, together with a comparison of the ``winner'' in the unperturbed case to the equivalent component in the perturbed case. \(n = 100, d=20, k=4.\)}
+  \label{fig:perturbation-failure-large-4}
+\end{figure}
+
 
 \end{document}
